@@ -27,8 +27,11 @@ app.use(express.json());
 app.use(express.static("public"));
 
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/mongoHeadlines", { useNewUrlParser: true });
 
+
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+
+mongoose.connect(MONGODB_URI);
 // Routes
 
 // A GET route for scraping the echoJS website
@@ -50,6 +53,9 @@ app.get("/scrape", function(req, res) {
       result.link = $(this)
         .children("a")
         .attr("href");
+      result.content = $(this)
+        .children("a")
+        .text();
 
       // Create a new Article using the `result` object built from scraping
       db.Article.create(result)
